@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using DG.Tweening;
+﻿using DG.Tweening;
 using UnityEngine;
 
 namespace GamePlay
@@ -8,7 +7,6 @@ namespace GamePlay
     {
         [SerializeField] private ItemType _type;
         private float _jumpDuration;
-        private Transform _startPosition;
         private float _jumpForce;
 
         public void Init(float duration,float jumpForce, ItemType type)
@@ -16,12 +14,11 @@ namespace GamePlay
             _jumpDuration = duration;
             _jumpForce = jumpForce;
             _type = type;
-            _startPosition = transform;
-           
         }
 
-        public void ShowItem()
+        public void ShowItem(Transform startPosition)
         {
+            transform.position = startPosition.position;
             gameObject.SetActive(true);
         }
        
@@ -34,19 +31,29 @@ namespace GamePlay
 
         public void MoveToStackPlace(Vector3 stackPosition)
         {
-            transform.DOJump(stackPosition, _jumpForce, 1, _jumpDuration).SetEase(Ease.OutQuad);
+            transform.DOJump(stackPosition, _jumpForce, 1, _jumpDuration)
+                     .SetEase(Ease.Linear);
         }
 
         public void MoveToPlayer(Player.Player player)
         {
             transform.DOKill();
-            transform.DOJump(player.transform.position, 2f, 1, _jumpDuration)
+            transform.DOJump(player.transform.position,_jumpForce, 1, _jumpDuration)
                      .OnComplete(() =>
                      {
-                        HideItem();
-                        Debug.Log("Pushed Item");
-                        transform.position = _startPosition.position; 
-                        player.AddItemInStack();
+                         HideItem();
+                         player.AddItemInStack(_type);
+                     });
+        }
+
+        public void MoveToTarget(Transform factory, IAddItems itemsStack)
+        {
+            transform.DOKill();
+            transform.DOJump(factory.transform.position, _jumpForce, 1, _jumpDuration)
+                     .OnComplete(() =>
+                     {
+                         HideItem();
+                         itemsStack.AddItem();
                      });
         }
     }

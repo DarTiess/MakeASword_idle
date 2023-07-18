@@ -1,12 +1,15 @@
 ﻿using System;
 using UnityEngine;
 
-//using GameAnalyticsSDK;
 
 namespace Infrastructure.Level
 {
     public class LevelManager : ILevelManager, ILevelEvents
     {
+        private float _timeWaitLose;
+        private float _timeWaitWin;
+        private bool _onPaused;
+        
         public event Action OnLevelStart;
         public event Action OnLevelWin;
         public event Action OnLateWin;
@@ -14,14 +17,11 @@ namespace Infrastructure.Level
         public event Action OnLateLost;
         public event Action OnPlayGame;
         public event Action StopGame;
-        
-        private float timeWaitLose;
-        private float timeWaitWin;
-        private bool _onPaused;
+
         public LevelManager(float timeWaitLose, float timeWaitWin)
         {
-            this.timeWaitLose = timeWaitLose;
-            this.timeWaitWin = timeWaitWin;
+            _timeWaitLose = timeWaitLose;
+            _timeWaitWin = timeWaitWin;
             LevelStart();
         }
     
@@ -29,8 +29,7 @@ namespace Infrastructure.Level
         {
             Taptic.Success();
             OnLevelStart?.Invoke();
-                                       
-            //GameAnalytics.NewProgressionEvent(GAProgressionStatus.Start, LevelLoader.NumLevel);
+           
         }
 
         public void PauseGame()
@@ -56,17 +55,15 @@ namespace Infrastructure.Level
         {
             Taptic.Failure();
             OnLevelLost?.Invoke();
-
-            //GameAnalytics.NewProgressionEvent(GAProgressionStatus.Fail,LevelLoader.NumLevel);
-
+            
             LateLost();
         }
 
         private void LateLost()
         {
-            while (timeWaitLose>0)
+            while (_timeWaitLose>0)
             {
-                timeWaitLose -= Time.deltaTime;
+                _timeWaitLose -= Time.deltaTime;
             }
             OnLateLost?.Invoke();
         }
@@ -76,16 +73,14 @@ namespace Infrastructure.Level
             Taptic.Success();
             OnLevelWin?.Invoke();
 
-            //GameAnalytics.NewProgressionEvent(GAProgressionStatus.Complete,LevelLoader.NumLevel); 
-
             LateWin();
         }
 
         private void LateWin()
         {
-            while (timeWaitWin>0)
+            while (_timeWaitWin>0)
             {
-                timeWaitWin -= Time.deltaTime;
+                _timeWaitWin -= Time.deltaTime;
             }
             OnLateWin?.Invoke();
         }

@@ -1,4 +1,5 @@
 ﻿using CamFollow;
+using GamePlay;
 using GamePlay.Player;
 using Infrastructure.Level;
 using Infrastructure.Input;
@@ -19,6 +20,8 @@ namespace Infrastructure
         [SerializeField] private float _rotationSpeed;
         [SerializeField] private Transform _playerStartPosition;
         [SerializeField] private Player _characterPrefab;
+        [SerializeField] private StackConfig _playerMetalStackConfig;
+        [SerializeField] private StackConfig _playerSwordStackConfig;
         [FormerlySerializedAs("_canvasPrefab")]
         [Header("UI")]
         [SerializeField] private UIControl _uiPrefab;
@@ -58,7 +61,7 @@ namespace Infrastructure
         private void CreateAndInitPlayer()
         {
             _character = Instantiate(_characterPrefab, _playerStartPosition.position, Quaternion.identity);
-            _character.Init(_inputService, _playerSpeed, _rotationSpeed);
+            _character.Init(_inputService, _playerSpeed, _rotationSpeed, _playerMetalStackConfig, _playerSwordStackConfig);
         }
 
         private void CreateAndInitCamera()

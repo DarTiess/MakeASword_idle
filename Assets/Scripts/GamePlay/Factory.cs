@@ -1,32 +1,38 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GamePlay
 {
-    public class Spawner: PullingSystem
+    public class Factory: PullingSystem, IAddItems
     {
-        protected override void CreateItemsList()
+        private int _resource;
+        
+        public void AddItem()
         {
-            base.CreateItemsList();
+            _resource++;
             _canPush = true;
+            _timer = 0;
+            return;
         }
-
         protected override void SpawnItem()
         {
-           
-            foreach (Item item in _itemsList)
+            if (_resource <= 0)
             {
-                if (!item.gameObject.activeInHierarchy)
+                return;
+            }
+           
+            for(int i=0;i<_resource;i++)
+            {
+                if (!_itemsList[_indexItem].gameObject.activeInHierarchy)
                 {
                     Vector3 placePosition = new Vector3(_itemsPlaces[_indexPlace].position.x,
                                                         _itemsPlaces[_indexPlace].position.y + _yAxis,
                                                         _itemsPlaces[_indexPlace].position.z);
-                    item.ShowItem(transform);
-                    item.MoveToStackPlace(placePosition);
+                    _itemsList[_indexItem].ShowItem(transform);
+                    _itemsList[_indexItem].MoveToStackPlace(placePosition);
                     
                     _canPush = true;
                     _timer = 0;
-
+                    _resource -= 1;
                     if (_indexItem < _itemsList.Count - 1)
                     {
                         _indexItem+=1;
@@ -43,13 +49,8 @@ namespace GamePlay
                     break;
                 }
             }
-           
         }
-
-        public override void PushItemToPlayer(Player.Player player)
-        {
-            base.PushItemToPlayer(player);
-            _canPush = true;
-        }
+       
+        
     }
 }

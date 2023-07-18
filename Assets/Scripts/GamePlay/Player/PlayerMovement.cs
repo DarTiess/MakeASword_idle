@@ -34,9 +34,7 @@ namespace GamePlay.Player
             _moveAnimator.MoveAnimation(_temp.magnitude);
 
             _nav.Move(_temp * _playerSpeed * Time.deltaTime);
-             
-           // _rigidbody.transform.Translate(_temp * Time.deltaTime * _playerSpeed, Space.World);
-
+           
             Rotation();
         }
 
@@ -49,11 +47,6 @@ namespace GamePlay.Player
                 transform.localRotation = Quaternion.Slerp(transform.localRotation,
                                                            Quaternion.LookRotation(lookDirection), _rotationSpeed * Time.deltaTime);
             }
-        }
-
-        public void FinishGame()
-        {
-            _playerSpeed = _rotationSpeed = 0;
         }
     }
 }
