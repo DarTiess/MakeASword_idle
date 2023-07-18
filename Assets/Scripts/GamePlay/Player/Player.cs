@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using Infrastructure.Input;
 using UnityEngine;
 
@@ -19,7 +20,6 @@ namespace GamePlay.Player
 
         private bool _isDead;
         public bool _stacking;
-        private bool _spawning;
         private bool _metalStackFull;
         private bool _swordStackFull;
 
@@ -28,52 +28,6 @@ namespace GamePlay.Player
             if (_isDead) return;
         
             _move.Move();
-        }
-
-        private void OnTriggerStay(Collider other)
-        {
-            if (other.gameObject.TryGetComponent<Spawner>(out Spawner spawner))
-            {
-                if (!_stacking && !_metalStackFull)
-                {
-                    _stacking = true;
-                    spawner.PushItemToPlayer(this);
-                    _playerAnimator.HasStack();
-                }
-            }
-
-            if (other.gameObject.TryGetComponent<Factory>(out Factory factory))
-            {
-                _playerMetalStack.PushItemsToTarget(factory);
-                _playerAnimator.StackEmpty();
-               
-
-                if (!_stacking && !_swordStackFull)
-                {
-                    _stacking = true;
-                    factory.PushItemToPlayer(this);
-                    return;
-                }
-            }
-
-            if (other.gameObject.TryGetComponent(out Stock stock))
-            {
-                stock.ShowDisplay();
-                _playerSwordStack.PushItemsToTarget(stock);
-            }
-        }
-
-        private void OnTriggerExit(Collider other)
-        {
-            if (other.gameObject.TryGetComponent(out IAddItems factory))
-            {
-                _stacking = false;
-            }
-
-            if (other.gameObject.TryGetComponent<Stock>(out Stock stoke))
-            {
-                stoke.HideDisplay();
-            }
         }
 
         public void Init(IInputService input, 
@@ -97,6 +51,75 @@ namespace GamePlay.Player
 
         }
 
+        private void OnTriggerStay(Collider other)
+        {
+            if (other.gameObject.TryGetComponent<Spawner>(out Spawner spawner))
+            {
+                TryTakeMetalItem(spawner);
+                return;
+            }
+
+            if (other.gameObject.TryGetComponent<Factory>(out Factory factory))
+            {
+                PushMetalItems(factory);
+                TryTakeSwordItem(factory);
+                return;
+            }
+
+            if (other.gameObject.TryGetComponent(out Stock stock))
+            {
+                stock.ShowDisplay();
+                _playerSwordStack.PushItemsToTarget(stock);
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.gameObject.TryGetComponent<Stock>(out Stock stoke))
+            {
+                stoke.HideDisplay();
+            }
+        }
+
+        private void TryTakeSwordItem(Factory factory)
+        {
+            if(_swordStackFull) return;
+
+            if (!_stacking)
+            {
+                StopCoroutine(StopStacking());
+                factory.PushItemToPlayer(this);
+                _stacking = true;
+                StartCoroutine(StopStacking());
+            }
+        }
+
+        private void PushMetalItems(Factory factory)
+        {
+            _playerMetalStack.PushItemsToTarget(factory);
+            _playerAnimator.StackEmpty();
+        }
+
+        private void TryTakeMetalItem(Spawner spawner)
+        {
+            if(_metalStackFull) return;
+            
+            if (!_stacking)
+            {
+                StopCoroutine(StopStacking());
+                spawner.PushItemToPlayer(this);
+                _playerAnimator.HasStack();
+                StartCoroutine(StopStacking());
+            }
+        }
+
+        private IEnumerator StopStacking()
+        {
+            _stacking = true;
+            yield return new WaitForSeconds(1.5f);
+            _stacking = false;
+        }
+
         public void AddItemInStack(ItemType type)
         { 
             
@@ -113,7 +136,7 @@ namespace GamePlay.Player
                     Debug.Log("I don't need type like this");
                     break;
             }
-            
+            _stacking = false;
         }
     }
 }

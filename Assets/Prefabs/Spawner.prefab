@@ -616,7 +616,7 @@ MonoBehaviour:
   - {fileID: 826875839548427085}
   - {fileID: 826875839699143371}
   _stackConfig: {fileID: 11400000, guid: c51516ac862e4bf409d7a58c032ae045, type: 2}
-  _itemDeliveryTime: 2.2
+  _itemDeliveryTime: 1.7
   _itemHeight: 0.3
 --- !u!1 &826875839548427086
 GameObject:

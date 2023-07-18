@@ -17,6 +17,7 @@ namespace GamePlay.Player
         protected int _indexItem;
 
         public event Action Full;
+        public event Action Empty;
 
         public void Init(StackConfig stackConfig, List<Transform> itemsPlaces)
         {
@@ -64,5 +65,23 @@ namespace GamePlay.Player
         }
 
         protected abstract void SetScale(Item item);
+        protected void MoveItem(IAddItems target, Transform gObject)
+        {
+            _itemsList[_indexItem - 1].MoveToTarget(gObject, target);
+            TryReduceIndex();
+        }
+
+        private void TryReduceIndex()
+        {
+            if (_indexItem > 0)
+            {
+                _indexItem -= 1;
+                _indexPlace -= 1;
+                if (_indexItem <= 0)
+                {
+                    Empty?.Invoke();
+                }
+            }
+        }
     }
 }

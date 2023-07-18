@@ -16,11 +16,7 @@ namespace GamePlay
         protected int _indexItem=0;
         protected bool _canPush;
         protected float _timer=0;
-
-        private void Start()
-        {
-            CreateItemsList();
-        }
+        
         private void Update()
         {
             if (!_canPush)
@@ -36,6 +32,13 @@ namespace GamePlay
             }
             _canPush = false;
             SpawnItem();
+        }
+        public void Init(StackConfig stackConfig, float deliveryTime, float itemHeight)
+        {
+            _stackConfig = stackConfig;
+            _itemDeliveryTime = deliveryTime;
+            _itemHeight = itemHeight;
+            CreateItemsList();
         }
 
         protected virtual void CreateItemsList()
@@ -56,7 +59,7 @@ namespace GamePlay
         protected abstract void SpawnItem();
         public virtual void PushItemToPlayer(Player.Player player)
         {
-            if (_indexItem>0)
+            if (_indexItem> 0)
             {
                 _itemsList[_indexItem-1].MoveToPlayer(player);
                 if (_indexItem>0)
@@ -65,7 +68,6 @@ namespace GamePlay
 
                     ChangeFreePlace();
                 }
-               
             }
         }
 
@@ -89,7 +91,26 @@ namespace GamePlay
                 _yAxis -= _itemHeight;
             }
         }
-       
+        protected void ChangePlaceIndex()
+        {
+            if (_indexPlace < _itemsPlaces.Count - 1)
+            {
+                _indexPlace += 1;
+            }
+            else
+            {
+                _indexPlace = 0;
+                _yAxis += _itemHeight;
+            }
+        }
+
+        protected void ChangeItemIndex()
+        {
+            if (_indexItem < _itemsList.Count - 1)
+            {
+                _indexItem += 1;
+            }
+        }
 
     }
 }

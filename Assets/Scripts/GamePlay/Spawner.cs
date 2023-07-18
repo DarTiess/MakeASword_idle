@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace GamePlay
 {
@@ -13,43 +12,33 @@ namespace GamePlay
 
         protected override void SpawnItem()
         {
-           
-            foreach (Item item in _itemsList)
+            for (int i = 0; i < _itemsList.Count; i++)
             {
-                if (!item.gameObject.activeInHierarchy)
+                if (!_itemsList[_indexItem].gameObject.activeInHierarchy)
                 {
                     Vector3 placePosition = new Vector3(_itemsPlaces[_indexPlace].position.x,
                                                         _itemsPlaces[_indexPlace].position.y + _yAxis,
                                                         _itemsPlaces[_indexPlace].position.z);
-                    item.ShowItem(transform);
-                    item.MoveToStackPlace(placePosition);
+                    _itemsList[_indexItem].ShowItem(transform);
+                    _itemsList[_indexItem].MoveToStackPlace(placePosition);
                     
                     _canPush = true;
                     _timer = 0;
-
-                    if (_indexItem < _itemsList.Count - 1)
-                    {
-                        _indexItem+=1;
-                    }
-                    if (_indexPlace < _itemsPlaces.Count-1)
-                    {
-                        _indexPlace+=1;
-                    }
-                    else
-                    {
-                        _indexPlace = 0;
-                        _yAxis += _itemHeight;
-                    }
+               
+                    ChangeItemIndex();
+                    ChangePlaceIndex();
                     break;
-                }
+                } 
             }
-           
         }
 
         public override void PushItemToPlayer(Player.Player player)
         {
             base.PushItemToPlayer(player);
             _canPush = true;
+            
         }
+
+     
     }
 }

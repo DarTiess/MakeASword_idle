@@ -33,19 +33,8 @@ namespace GamePlay
                     _canPush = true;
                     _timer = 0;
                     _resource -= 1;
-                    if (_indexItem < _itemsList.Count - 1)
-                    {
-                        _indexItem+=1;
-                    }
-                    if (_indexPlace < _itemsPlaces.Count-1)
-                    {
-                        _indexPlace+=1;
-                    }
-                    else
-                    {
-                        _indexPlace = 0;
-                        _yAxis += _itemHeight;
-                    }
+                    ChangeItemIndex();
+                    ChangePlaceIndex();
                     break;
                 }
             }

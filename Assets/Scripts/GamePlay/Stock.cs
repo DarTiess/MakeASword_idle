@@ -17,7 +17,6 @@ namespace GamePlay
         {
             _swords += 1;
             _swordCount.text = _swords+ "x";
-          
         }
 
         public void ShowDisplay()

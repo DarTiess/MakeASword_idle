@@ -15,6 +15,7 @@ namespace Infrastructure
         [SerializeField] private LevelLoader _levelLoader;
         [SerializeField] private float _timeWin;
         [SerializeField] private float _timeLose;
+        [SerializeField] private NavMeshSettings _navMeshSettings;
         [Header("Player Settings")]
         [SerializeField] private float _playerSpeed;
         [SerializeField] private float _rotationSpeed;
@@ -25,12 +26,30 @@ namespace Infrastructure
         [FormerlySerializedAs("_canvasPrefab")]
         [Header("UI")]
         [SerializeField] private UIControl _uiPrefab;
+        [Header("SpawnerSettings")]
+        [SerializeField] private Spawner _spawnerPrefab;
+        [SerializeField] private Transform _spawnerPosition;
+        [SerializeField] private StackConfig _spawnerStackConfig;
+        [SerializeField] private float _spawnerDeliveryTime;
+        [SerializeField] private float _spawnerItemHeight;
+        [Header("FactorySettings")]
+        [SerializeField] private Factory _factoryPrefab;
+        [SerializeField] private Transform _factoryPosition;
+        [SerializeField] private StackConfig _factoryStackConfig;
+        [SerializeField] private float _factoryDeliveryTime;
+        [SerializeField] private float _factoryItemHeight;
+        [Header("FactorySettings")]
+        [SerializeField] private Stock _stockPrefab;
+        [SerializeField] private Transform _stockPosition;
 
         private LevelManager _levelManager;
         private IInputService _inputService;
         private UIControl _ui;
         private Player _character;
-        private CamFollower _camera; 
+        private CamFollower _camera;
+        private Spawner _spawner;
+        private Factory _factory;
+        private Stock _stock;
         private void Awake()
         {
             _levelManager = new LevelManager(_timeLose, _timeWin);
@@ -38,6 +57,10 @@ namespace Infrastructure
             _inputService = InputService();
             CreateAndInitPlayer();
             CreateAndInitCamera();
+            CreateAndInitSpawner();
+            CreateAndInitFactory();
+            CreateStock();
+            _navMeshSettings.UpdateNavMesh();
         }
 
         private void CreateAndInitUI()
@@ -68,6 +91,26 @@ namespace Infrastructure
         {
             _camera = Camera.main.GetComponent<CamFollower>();
             _camera.Init(_levelManager, _character.transform);
+        }
+
+        private void CreateAndInitSpawner()
+        {
+            _spawner = Instantiate(_spawnerPrefab);
+            _spawner.transform.position = _spawnerPosition.position;
+            _spawner.Init(_spawnerStackConfig, _spawnerDeliveryTime, _spawnerItemHeight);
+        }
+
+        private void CreateAndInitFactory()
+        {
+            _factory = Instantiate(_factoryPrefab);
+            _factory.transform.position = _factoryPosition.position;
+            _factory.Init(_factoryStackConfig, _factoryDeliveryTime, _factoryItemHeight);
+        }
+
+        private void CreateStock()
+        {
+            _stock = Instantiate(_stockPrefab);
+            _stock.transform.position = _stockPosition.position;
         }
     }
 }

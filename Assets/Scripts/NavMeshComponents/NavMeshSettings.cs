@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
+
 
 public class NavMeshSettings : MonoBehaviour
 {
@@ -19,8 +18,11 @@ public class NavMeshSettings : MonoBehaviour
 
     private void Start()
     {
-        _surface = GetComponent<NavMeshSurface>();
-        _surface.BuildNavMesh();
+        if (_surface == null)
+        {
+            _surface = GetComponent<NavMeshSurface>();
+            _surface.BuildNavMesh();
+        }
     }
 
     void Update()
@@ -33,8 +35,13 @@ public class NavMeshSettings : MonoBehaviour
         UpdateNavMesh();  
     }
 
-    private void UpdateNavMesh()
+    public void UpdateNavMesh()
     {
+        if (_surface == null)
+        {
+            _surface = GetComponent<NavMeshSurface>();
+            _surface.BuildNavMesh();
+        }
         _surface.UpdateNavMesh(_surface.navMeshData);
         _surface.AddData();
     }

@@ -27,8 +27,6 @@ namespace GamePlay
             gameObject.SetActive(false);
         }
 
-      
-
         public void MoveToStackPlace(Vector3 stackPosition)
         {
             transform.DOJump(stackPosition, _jumpForce, 1, _jumpDuration)
